@@ -20,3 +20,6 @@ int reverseDegree(char* s)
     return total;
 }
 
+// Lesson here is that strlen function iterates over the entire string to get the lenghth of it wheras if we just search for the string termination character we only have to do it once. 
+
+// Be careful of strlen use.
