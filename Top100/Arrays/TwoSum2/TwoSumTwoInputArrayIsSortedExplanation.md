@@ -1,0 +1,5 @@
+# Two sum II. Input array is sorted explanation.
+
+## TwoSumTwoPointer Solution
+
+The solution to this one utilises the ordering to implement a simple two pointer solution. The solution runs a loop which controls two pointers, one starting from the start of the array and one starting at the end. Since we know that the array is in ascending order we know that if the first pointer moves right we get a higher value through addition and if the right pointer moves left we get a lower value. This means we can test the value every iteration and move the pointers accordingly until we find a suitable value or until the values overlap. Whilst in the previous two sum solution we needed to store the values in a hash map and we could still do that here we can have O(1) memory complexity as we need only store a few values and whilst this algorithm is also O(N) time complexity it would in most cases other than the worst case scenario be faster than the original two sum due to the search being more directed at what is needed as well as avoiding hash lookups.
