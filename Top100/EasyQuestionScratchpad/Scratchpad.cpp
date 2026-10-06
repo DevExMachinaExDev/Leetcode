@@ -2,6 +2,9 @@
 #include <string>
 #include <unordered_set>
 #include <numeric>
+#include <string>
+#include <algorithm>
+#include <stack>
 
 // Contains code for quickly solving the easy level provlems on leetcode where it was not though necessary to do write ups.
 // These questions were generally done for warmup or quick practice sessions.
@@ -622,13 +625,868 @@ std::vector<int> pivotArray(std::vector<int>& nums, int pivot)
 }
 
 
-int minOperationsToMakeDivisibleByThree(const std::vector<int>& numbers) {
+int minOperationsToMakeDivisibleByThree(const std::vector<int>& numbers) 
+{
     int totalOperationsNeeded = 0;
 
-    for (int value : numbers) {
+    for (int value : numbers) 
+    {
         totalOperationsNeeded += (value % 3 != 0);
     }
 
     return totalOperationsNeeded;
 }
 
+/*There is a programming language with only four operations and one variable X:
+
+++X and X++ increments the value of the variable X by 1.
+--X and X-- decrements the value of the variable X by 1.
+Initially, the value of X is 0.
+
+Given an array of strings operations containing a list of operations, return the final value of X after performing all the operations.
+
+ 
+
+Example 1:
+
+Input: operations = ["--X","X++","X++"]
+Output: 1
+Explanation: The operations are performed as follows:
+Initially, X = 0.
+--X: X is decremented by 1, X =  0 - 1 = -1.
+X++: X is incremented by 1, X = -1 + 1 =  0.
+X++: X is incremented by 1, X =  0 + 1 =  1.
+Example 2:
+
+Input: operations = ["++X","++X","X++"]
+Output: 3
+Explanation: The operations are performed as follows:
+Initially, X = 0.
+++X: X is incremented by 1, X = 0 + 1 = 1.
+++X: X is incremented by 1, X = 1 + 1 = 2.
+X++: X is incremented by 1, X = 2 + 1 = 3.
+Example 3:
+
+Input: operations = ["X++","++X","--X","X--"]
+Output: 0
+Explanation: The operations are performed as follows:
+Initially, X = 0.
+X++: X is incremented by 1, X = 0 + 1 = 1.
+++X: X is incremented by 1, X = 1 + 1 = 2.
+--X: X is decremented by 1, X = 2 - 1 = 1.
+X--: X is decremented by 1, X = 1 - 1 = 0.
+ 
+
+Constraints:
+
+1 <= operations.length <= 100
+operations[i] will be either "++X", "X++", "--X", or "X--".
+*/
+
+int finalValueAfterOperations(std::vector<std::string>& operations) 
+{
+    int numValue = 0;
+
+    for(int i = 0; i < operations[0].size(); ++i)
+    {
+        if (operations[0][i] >= '0' &&  operations[0][i] <= '9')
+        {
+            numValue *= 10;
+            numValue += operations[0][i] - '0';
+        }
+    }
+
+    int operationsTotal = 0;
+    for (int i = 0; i < operations.size(); ++i)
+    {
+        if(operations[i][0] == '+')
+        {
+            operationsTotal++;
+            continue;
+        }
+        else if(operations[i][operations[i].size() - 1] == '+')
+        {
+            operationsTotal++;
+            continue;
+        }
+        else if(operations[i][0] == '-')
+        {
+            operationsTotal--;
+            continue;
+        }
+        else if(operations[i][operations[i].size() - 1] == '-')
+        {
+            operationsTotal--;
+            continue;
+        }
+    }
+
+    return numValue + operationsTotal;
+}
+
+
+/*
+You are given an integer n.
+
+The score of n is defined as the sum of d * freq(d) over all distinct digits d, where freq(d) denotes the number of times the digit d appears in n.
+
+Return an integer denoting the score of n.
+
+ 
+
+Example 1:
+
+Input: n = 122
+
+Output: 5
+
+Explanation:
+
+The digit 1 appears 1 time, contributing 1 * 1 = 1.
+The digit 2 appears 2 times, contributing 2 * 2 = 4.
+Thus, the score of n is 1 + 4 = 5.
+Example 2:
+
+Input: n = 101
+
+Output: 2
+
+Explanation:
+
+The digit 0 appears 1 time, contributing 0 * 1 = 0.
+The digit 1 appears 2 times, contributing 1 * 2 = 2.
+Thus, the score of n is 2.
+ 
+
+Constraints:
+
+1 <= n <= 109
+*/
+
+int digitFrequencyScore(int n) 
+{
+    int frequencyTracker[10] {0};
+
+    int numToCheck = n;
+
+    while(numToCheck > 0)
+    {
+        int digit = numToCheck % 10;
+        frequencyTracker[digit]++;
+        numToCheck /= 10;
+    }
+
+    int digitFrequencyScore = 0;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        digitFrequencyScore += frequencyTracker[i] * i;
+    }
+    return digitFrequencyScore;
+}
+
+/*You are given an array of strings words, where each string represents a word containing lowercase English letters.
+
+You are also given an integer array weights of length 26, where weights[i] represents the weight of the ith lowercase English letter.
+
+The weight of a word is defined as the sum of the weights of its characters.
+
+For each word, take its weight modulo 26 and map the result to a lowercase English letter using reverse alphabetical order (0 -> 'z', 1 -> 'y', ..., 25 -> 'a').
+
+Return a string formed by concatenating the mapped characters for all words in order.
+
+ 
+
+Example 1:
+
+Input: words = ["abcd","def","xyz"], weights = [5,3,12,14,1,2,3,2,10,6,6,9,7,8,7,10,8,9,6,9,9,8,3,7,7,2]
+
+Output: "rij"
+
+Explanation:
+
+The weight of "abcd" is 5 + 3 + 12 + 14 = 34. The result modulo 26 is 34 % 26 = 8, which maps to 'r'.
+The weight of "def" is 14 + 1 + 2 = 17. The result modulo 26 is 17 % 26 = 17, which maps to 'i'.
+The weight of "xyz" is 7 + 7 + 2 = 16. The result modulo 26 is 16 % 26 = 16, which maps to 'j'.
+Thus, the string formed by concatenating the mapped characters is "rij".
+
+Example 2:
+
+Input: words = ["a","b","c"], weights = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+Output: "yyy"
+
+Explanation:
+
+Each word has weight 1. The result modulo 26 is 1 % 26 = 1, which maps to 'y'.
+
+Thus, the string formed by concatenating the mapped characters is "yyy".
+
+Example 3:
+
+Input: words = ["abcd"], weights = [7,5,3,4,3,5,4,9,4,2,2,7,10,2,5,10,6,1,2,2,4,1,3,4,4,5]
+
+Output: "g"
+
+Explanation:​​​​​​​
+
+The weight of "abcd" is 7 + 5 + 3 + 4 = 19. The result modulo 26 is 19 % 26 = 19, which maps to 'g'.
+
+Thus, the string formed by concatenating the mapped characters is "g".
+
+ 
+
+Constraints:
+
+1 <= words.length <= 100
+1 <= words[i].length <= 10
+weights.length == 26
+1 <= weights[i] <= 100
+words[i] consists of lowercase English letters.
+*/
+
+std::string mapWordWeights(std::vector<std::string>& words, std::vector<int>& weights)
+{
+    int n = words.size();
+    std::string mappedWordWeights;
+    mappedWordWeights.reserve(n);
+
+    for (int i = 0; i < n; ++i)
+    {
+        const std::string& w = words[i];
+        int wordWeight = 0;
+
+        int len = w.size();
+        for (int j = 0; j < len; ++j)
+        {
+            int letterIndex = w[j] - 'a';
+            wordWeight += weights[letterIndex];
+        }
+
+        int modValue = wordWeight % 26;
+        char mappedChar = 'z' - modValue;
+
+        mappedWordWeights.push_back(mappedChar);
+    }
+
+    return mappedWordWeights;
+}
+
+/*
+You are given a 0-indexed array of strings words and a character x.
+
+Return an array of indices representing the words that contain the character x.
+
+Note that the returned array may be in any order.
+
+ 
+
+Example 1:
+
+Input: words = ["leet","code"], x = "e"
+Output: [0,1]
+Explanation: "e" occurs in both words: "leet", and "code". Hence, we return indices 0 and 1.
+Example 2:
+
+Input: words = ["abc","bcd","aaaa","cbc"], x = "a"
+Output: [0,2]
+Explanation: "a" occurs in "abc", and "aaaa". Hence, we return indices 0 and 2.
+Example 3:
+
+Input: words = ["abc","bcd","aaaa","cbc"], x = "z"
+Output: []
+Explanation: "z" does not occur in any of the words. Hence, we return an empty array.
+ 
+
+Constraints:
+
+1 <= words.length <= 50
+1 <= words[i].length <= 50
+x is a lowercase English letter.
+words[i] consists only of lowercase English letters.
+*/
+
+std::vector<int> findWordsContaining(std::vector<std::string>& words, char x) 
+{
+    std::vector<int> wordsContaining;
+    wordsContaining.reserve(words.size());
+
+    for (int idx = 0; idx < words.size(); ++idx)
+    {
+        const std::string& w = words[idx];
+        int wSize = w.size();
+
+        for (int i = 0; i < wSize; ++i)
+        {
+            if (w[i] == x)
+            {
+                wordsContaining.push_back(idx);
+                break; // stop scanning this word once x is found
+            }
+        }
+    }
+
+    return wordsContaining;
+}
+
+
+/*Given a valid (IPv4) IP address, return a defanged version of that IP address.
+
+A defanged IP address replaces every period "." with "[.]".
+
+ 
+
+Example 1:
+
+Input: address = "1.1.1.1"
+Output: "1[.]1[.]1[.]1"
+Example 2:
+
+Input: address = "255.100.50.0"
+Output: "255[.]100[.]50[.]0"
+ 
+
+Constraints:
+
+The given address is a valid IPv4 address.
+*/
+
+std::string defangIPaddr(const std::string& address) 
+{
+    std::string out;
+    out.reserve(address.size() + 6);
+
+    for (char c : address) 
+    {
+        if (c == '.') 
+        {
+            out += "[.]";
+        } else 
+        {
+            out += c;
+        }
+    }
+
+    return out;
+}
+
+/*Given an array of integers nums, return the number of good pairs.
+
+A pair (i, j) is called good if nums[i] == nums[j] and i < j.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3,1,1,3]
+Output: 4
+Explanation: There are 4 good pairs (0,3), (0,4), (3,4), (2,5) 0-indexed.
+Example 2:
+
+Input: nums = [1,1,1,1]
+Output: 6
+Explanation: Each pair in the array are good.
+Example 3:
+
+Input: nums = [1,2,3]
+Output: 0
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 100
+*/
+int numIdenticalPairs(std::vector<int>& nums) 
+{
+    int count[101] = {0};
+    int result = 0;
+
+    for (int i : nums) 
+    {
+        result += count[i];
+        count[i]++;
+    }
+
+    return result;
+}
+
+/*You are given a non-negative floating point number rounded to two decimal places celsius, that denotes the temperature in Celsius.
+
+You should convert Celsius into Kelvin and Fahrenheit and return it as an array ans = [kelvin, fahrenheit].
+
+Return the array ans. Answers within 10-5 of the actual answer will be accepted.
+
+Note that:
+
+Kelvin = Celsius + 273.15
+Fahrenheit = Celsius * 1.80 + 32.00
+ 
+
+Example 1:
+
+Input: celsius = 36.50
+Output: [309.65000,97.70000]
+Explanation: Temperature at 36.50 Celsius converted in Kelvin is 309.65 and converted in Fahrenheit is 97.70.
+Example 2:
+
+Input: celsius = 122.11
+Output: [395.26000,251.79800]
+Explanation: Temperature at 122.11 Celsius converted in Kelvin is 395.26 and converted in Fahrenheit is 251.798.
+ 
+
+Constraints:
+
+0 <= celsius <= 1000
+*/
+
+std::vector<double> convertTemperature(double celsius) 
+{
+    std::vector<double> temps;
+    temps.reserve(2);
+
+    temps.push_back(celsius + 273.15);
+    temps.push_back(celsius * 1.80 + 32.00);
+    return temps;
+}
+
+
+
+/*
+You have n boxes. You are given a binary string boxes of length n, where boxes[i] is '0' if the ith box is empty, and '1' if it contains one ball.
+
+In one operation, you can move one ball from a box to an adjacent box. Box i is adjacent to box j if abs(i - j) == 1. Note that after doing so, there may be more than one ball in some boxes.
+
+Return an array answer of size n, where answer[i] is the minimum number of operations needed to move all the balls to the ith box.
+
+Each answer[i] is calculated considering the initial state of the boxes.
+
+ 
+
+Example 1:
+
+Input: boxes = "110"
+Output: [1,1,3]
+Explanation: The answer for each box is as follows:
+1) First box: you will have to move one ball from the second box to the first box in one operation.
+2) Second box: you will have to move one ball from the first box to the second box in one operation.
+3) Third box: you will have to move one ball from the first box to the third box in two operations, and move one ball from the second box to the third box in one operation.
+Example 2:
+
+Input: boxes = "001011"
+Output: [11,8,5,4,3,4]
+ 
+*/
+
+std::vector<int> minOperations(const std::string& boxes) 
+{
+    int n = boxes.size();
+    std::vector<int> movesNeeded;
+    movesNeeded.reserve(n);
+
+    int ballsSeen = 0;
+    int costToCurrent = 0;
+
+    for (int i = 0; i < n; i++) 
+    {
+        movesNeeded.push_back(costToCurrent);
+        if (boxes[i] == '1') ballsSeen++;
+        costToCurrent += ballsSeen;
+    }
+
+    ballsSeen = 0;
+    costToCurrent = 0;
+
+    for (int i = n - 1; i >= 0; i--) 
+    {
+        movesNeeded[i] += costToCurrent;
+        if (boxes[i] == '1') ballsSeen++;
+        costToCurrent += ballsSeen;
+    }
+
+    return movesNeeded;
+}
+
+/*
+You're given strings jewels representing the types of stones that are jewels, and stones representing the stones you have. Each character in stones is a type of stone you have. You want to know how many of the stones you have are also jewels.
+
+Letters are case sensitive, so "a" is considered a different type of stone from "A".
+
+ 
+
+Example 1:
+
+Input: jewels = "aA", stones = "aAAbbbb"
+Output: 3
+Example 2:
+
+Input: jewels = "z", stones = "ZZ"
+Output: 0
+ 
+
+Constraints:
+
+1 <= jewels.length, stones.length <= 50
+jewels and stones consist of only English letters.
+All the characters of jewels are unique.
+*/
+
+int numJewelsInStones(const std::string& jewels, const std::string& stones)
+{
+    bool isJewel[128] = { false };
+
+    for (char c : jewels)
+        isJewel[(unsigned char)c] = true;
+
+    int count = 0;
+
+    for (char c : stones)
+        count += isJewel[(unsigned char)c];
+
+    return count;
+}
+
+int numJewelsInStones(const std::string& jewels, const std::string& stones)
+{
+    uint64_t mask = 0;
+
+    for (char c : jewels)
+        mask |= 1ULL << ((unsigned char)c - 'A');
+
+    int count = 0;
+
+    for (char c : stones)
+        count += (mask >> ((unsigned char)c - 'A')) & 1ULL;
+
+    return count;
+}
+
+/*In the town of Digitville, there was a list of numbers called nums containing integers from 0 to n - 1. Each number was supposed to appear exactly once in the list, however, two mischievous numbers sneaked in an additional time, making the list longer than usual.
+
+As the town detective, your task is to find these two sneaky numbers. Return an array of size two containing the two numbers (in any order), so peace can return to Digitville.
+
+ 
+
+Example 1:
+
+Input: nums = [0,1,1,0]
+
+Output: [0,1]
+
+Explanation:
+
+The numbers 0 and 1 each appear twice in the array.
+
+Example 2:
+
+Input: nums = [0,3,2,1,3,2]
+
+Output: [2,3]
+
+Explanation:
+
+The numbers 2 and 3 each appear twice in the array.
+
+Example 3:
+
+Input: nums = [7,1,5,4,3,4,6,0,9,5,8,2]
+
+Output: [4,5]
+
+Explanation:
+
+The numbers 4 and 5 each appear twice in the array.
+
+ 
+
+Constraints:
+
+2 <= n <= 100
+nums.length == n + 2
+0 <= nums[i] < n
+The input is generated such that nums contains exactly two repeated elements.*/
+
+
+std::vector<int> getSneakyNumbers(std::vector<int>& nums) 
+{
+    int found[10] = {0};
+
+    std::vector<int> toReturn;
+    toReturn.reserve(2);
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        if (found[nums[i]])
+        {
+            toReturn.push_back(nums[i]);
+        }
+        found[nums[i]] = true;
+    }
+
+    return toReturn;
+}
+
+std::vector<int> getSneakyNumbers(std::vector<int>& nums)
+{
+    uint64_t mask0 = 0;
+    uint64_t mask1 = 0;
+
+    std::vector<int> out;
+    out.reserve(2);
+
+    for (int x : nums)
+    {
+        if (x < 64)
+        {
+            uint64_t bit = 1ULL << x;
+            if (mask0 & bit)
+                out.push_back(x);
+            mask0 |= bit;
+        }
+        else
+        {
+            uint64_t bit = 1ULL << (x - 64);
+            if (mask1 & bit)
+                out.push_back(x);
+            mask1 |= bit;
+        }
+    }
+
+    return out;
+}
+
+std::vector<int> countBits(int n) 
+{
+    std::vector<int> ans;
+    ans.reserve(n+1);
+
+    ans.push_back(0);
+
+    for (int i = 1; i <= n; i++)
+        ans.push_back( ans[i >> 1] + (i & 1));
+
+    return ans;
+}
+
+/*
+You are given an integer array nums. Transform nums by performing the following operations in the exact order specified:
+
+Replace each even number with 0.
+Replace each odd numbers with 1.
+Sort the modified array in non-decreasing order.
+Return the resulting array after performing these operations.
+
+ 
+
+Example 1:
+
+Input: nums = [4,3,2,1]
+
+Output: [0,0,1,1]
+
+Explanation:
+
+Replace the even numbers (4 and 2) with 0 and the odd numbers (3 and 1) with 1. Now, nums = [0, 1, 0, 1].
+After sorting nums in non-descending order, nums = [0, 0, 1, 1].
+Example 2:
+
+Input: nums = [1,5,1,4,2]
+
+Output: [0,0,1,1,1]
+
+Explanation:
+
+Replace the even numbers (4 and 2) with 0 and the odd numbers (1, 5 and 1) with 1. Now, nums = [1, 1, 1, 0, 0].
+After sorting nums in non-descending order, nums = [0, 0, 1, 1, 1].
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 1000
+*/
+
+std::vector<int> transformArray(std::vector<int>& nums)
+{
+    int evens = 0;
+
+    for (int i = 0; i < nums.size(); ++i)
+        evens += !(nums[i] & 1); 
+
+    for (int i = 0; i < evens; ++i)
+        nums[i] = 0;
+
+    for (int i = evens; i < nums.size(); ++i)
+        nums[i] = 1;
+
+    return nums;
+}
+
+/*Balanced strings are those that have an equal quantity of 'L' and 'R' characters.
+
+Given a balanced string s, split it into some number of substrings such that:
+
+Each substring is balanced.
+Return the maximum number of balanced strings you can obtain.
+
+ 
+
+Example 1:
+
+Input: s = "RLRRLLRLRL"
+Output: 4
+Explanation: s can be split into "RL", "RRLL", "RL", "RL", each substring contains same number of 'L' and 'R'.
+Example 2:
+
+Input: s = "RLRRRLLRLL"
+Output: 2
+Explanation: s can be split into "RL", "RRRLLRLL", each substring contains same number of 'L' and 'R'.
+Note that s cannot be split into "RL", "RR", "RL", "LR", "LL", because the 2nd and 5th substrings are not balanced.
+Example 3:
+
+Input: s = "LLLLRRRR"
+Output: 1
+Explanation: s can be split into "LLLLRRRR".
+ 
+
+Constraints:
+
+2 <= s.length <= 1000
+s[i] is either 'L' or 'R'.
+s is a balanced string.
+*/
+
+int balancedStringSplit(const std::string& s)
+{
+    int count = 0;
+    int bal = 0;
+
+    for (char c : s)
+    {
+        bal += (c == 'R') ? 1 : -1;
+        count += (bal == 0);
+    }
+
+    return count;
+}
+
+/*Given a 0-indexed integer array nums of length n and an integer target, return the number of pairs (i, j) where 0 <= i < j < n and nums[i] + nums[j] < target.
+ 
+
+Example 1:
+
+Input: nums = [-1,1,2,3,1], target = 2
+Output: 3
+Explanation: There are 3 pairs of indices that satisfy the conditions in the statement:
+- (0, 1) since 0 < 1 and nums[0] + nums[1] = 0 < target
+- (0, 2) since 0 < 2 and nums[0] + nums[2] = 1 < target 
+- (0, 4) since 0 < 4 and nums[0] + nums[4] = 0 < target
+Note that (0, 3) is not counted since nums[0] + nums[3] is not strictly less than the target.
+Example 2:
+
+Input: nums = [-6,2,5,-2,-7,-1,3], target = -2
+Output: 10
+Explanation: There are 10 pairs of indices that satisfy the conditions in the statement:
+- (0, 1) since 0 < 1 and nums[0] + nums[1] = -4 < target
+- (0, 3) since 0 < 3 and nums[0] + nums[3] = -8 < target
+- (0, 4) since 0 < 4 and nums[0] + nums[4] = -13 < target
+- (0, 5) since 0 < 5 and nums[0] + nums[5] = -7 < target
+- (0, 6) since 0 < 6 and nums[0] + nums[6] = -3 < target
+- (1, 4) since 1 < 4 and nums[1] + nums[4] = -5 < target
+- (3, 4) since 3 < 4 and nums[3] + nums[4] = -9 < target
+- (3, 5) since 3 < 5 and nums[3] + nums[5] = -3 < target
+- (4, 5) since 4 < 5 and nums[4] + nums[5] = -8 < target
+- (4, 6) since 4 < 6 and nums[4] + nums[6] = -4 < target
+ 
+
+Constraints:
+
+1 <= nums.length == n <= 50
+-50 <= nums[i], target <= 50*/
+
+int countPairs(std::vector<int>& nums, int target) 
+{
+    std::sort(nums.begin(), nums.end());
+    int left = 0;
+    int right = nums.size() - 1;
+    int count = 0;
+
+    while (left < right) 
+    {
+        if (nums[left] + nums[right] < target) 
+        {
+            count += (right - left);
+            left++;
+        } else
+        {
+            right--;
+        }
+    }
+
+    return count;   
+}
+/*
+Given the root node of a binary search tree and two integers low and high, return the sum of values of all nodes with a value in the inclusive range [low, high].
+
+ 
+
+Example 1:
+
+
+Input: root = [10,5,15,3,7,null,18], low = 7, high = 15
+Output: 32
+Explanation: Nodes 7, 10, and 15 are in the range [7, 15]. 7 + 10 + 15 = 32.
+Example 2:
+
+
+Input: root = [10,5,15,3,7,13,18,1,null,6], low = 6, high = 10
+Output: 23
+Explanation: Nodes 6, 7, and 10 are in the range [6, 10]. 6 + 7 + 10 = 23.
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [1, 2 * 104].
+1 <= Node.val <= 105
+1 <= low <= high <= 105
+All Node.val are unique.
+*/
+
+struct TreeNode 
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+
+int rangeSumBST(TreeNode* root, int low, int high) 
+{
+    std::stack<TreeNode*> stack;
+    int sum = 0;
+    stack.push(root);
+    while (!stack.empty()) 
+    {
+        TreeNode* node = stack.top();
+        stack.pop();
+        if (node) 
+        {
+            if (node->val >= low && node->val <= high) 
+            {
+                sum += node->val;
+            }
+            if (node->val > low) 
+            {
+                stack.push(node->left);
+            }
+            if (node->val < high) 
+            {
+                stack.push(node->right);
+            }
+        }
+    }
+    return sum;
+}
