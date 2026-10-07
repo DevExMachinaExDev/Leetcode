@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <stack>
+#include <queue>
 
 // Contains code for quickly solving the easy level provlems on leetcode where it was not though necessary to do write ups.
 // These questions were generally done for warmup or quick practice sessions.
@@ -1490,3 +1491,904 @@ int rangeSumBST(TreeNode* root, int low, int high)
     }
     return sum;
 }
+
+/*
+Given an integer array nums, handle multiple queries of the following type:
+
+Calculate the sum of the elements of nums between indices left and right inclusive where left <= right.
+Implement the NumArray class:
+
+NumArray(int[] nums) Initializes the object with the integer array nums.
+int sumRange(int left, int right) Returns the sum of the elements of nums between indices left and right inclusive (i.e. nums[left] + nums[left + 1] + ... + nums[right]).
+ 
+
+Example 1:
+
+Input
+["NumArray", "sumRange", "sumRange", "sumRange"]
+[[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]
+Output
+[null, 1, -1, -3]
+
+Explanation
+NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
+numArray.sumRange(0, 2); // return (-2) + 0 + 3 = 1
+numArray.sumRange(2, 5); // return 3 + (-5) + 2 + (-1) = -1
+numArray.sumRange(0, 5); // return (-2) + 0 + 3 + (-5) + 2 + (-1) = -3
+ 
+
+Constraints:
+
+1 <= nums.length <= 104
+-105 <= nums[i] <= 105
+0 <= left <= right < nums.length
+At most 104 calls will be made to sumRange.*/
+
+class NumArray 
+{
+public:
+    NumArray(std::vector<int>& nums) 
+    {
+        storedNums = nums;
+
+        storedTotals.reserve(nums.size());
+        int currentTotal = 0;
+        for(int i = 0; i < nums.size(); ++i)
+        {
+            currentTotal += nums[i];
+            storedTotals.push_back(currentTotal);
+        }
+    } 
+    
+    int sumRange(int left, int right)
+    {
+       if (left == 0)
+          return storedTotals[right];
+       else
+          return storedTotals[right] - storedTotals[left - 1];
+    }
+
+private: 
+std::vector<int> storedNums;
+std::vector<int> storedTotals;
+
+};
+
+/*
+Given the root of a binary tree, return the inorder traversal of its nodes' values.
+
+ 
+
+Example 1:
+
+Input: root = [1,null,2,3]
+
+Output: [1,3,2]
+
+Explanation:
+
+
+
+Example 2:
+
+Input: root = [1,2,3,4,5,null,8,null,null,6,7,9]
+
+Output: [4,2,6,5,7,1,3,9,8]
+
+Explanation:
+
+
+
+Example 3:
+
+Input: root = []
+
+Output: []
+
+Example 4:
+
+Input: root = [1]
+
+Output: [1]
+
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 100].
+-100 <= Node.val <= 100
+ 
+
+Follow up: Recursive solution is trivial, could you do it iteratively?
+*/
+
+struct TreeNode 
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+std::vector<int> inorderTraversal(TreeNode* root) 
+{
+    std::vector<int> result;
+    std::stack<TreeNode*> stack;
+    TreeNode* current = root;
+
+    while (current != nullptr || !stack.empty())
+    {
+
+
+        while (current != nullptr) {
+            stack.push(current);
+            current = current->left;
+        }
+
+        current = stack.top();
+        stack.pop();
+        result.push_back(current->val);
+
+        current = current->right;
+    }
+
+    return result;
+}
+
+/*You are given a string s and an integer k.
+
+Reverse the first k characters of s and return the resulting string.
+
+ 
+
+Example 1:
+
+Input: s = "abcd", k = 2
+
+Output: "bacd"
+
+Explanation:​​​​​​​
+
+The first k = 2 characters "ab" are reversed to "ba". The final resulting string is "bacd".
+
+Example 2:
+
+Input: s = "xyz", k = 3
+
+Output: "zyx"
+
+Explanation:
+
+The first k = 3 characters "xyz" are reversed to "zyx". The final resulting string is "zyx".
+
+Example 3:
+
+Input: s = "hey", k = 1
+
+Output: "hey"
+
+Explanation:
+
+The first k = 1 character "h" remains unchanged on reversal. The final resulting string is "hey".
+
+ 
+
+Constraints:
+
+1 <= s.length <= 100
+s consists of lowercase English letters.
+1 <= k <= s.length
+*/
+
+std::string reversePrefix(std::string s, int k)
+{
+    for (int i = 0; i < k / 2; ++i)
+    {
+        s[i] ^= s[k - 1 - i];
+        s[k - 1 - i] ^= s[i];
+        s[i] ^= s[k - 1 - i];
+    }
+    return s;
+}
+
+/*Given two binary trees original and cloned and given a reference to a node target in the original tree.
+
+The cloned tree is a copy of the original tree.
+
+Return a reference to the same node in the cloned tree.
+
+Note that you are not allowed to change any of the two trees or the target node and the answer must be a reference to a node in the cloned tree.
+
+ 
+
+Example 1:
+
+
+Input: tree = [7,4,3,null,null,6,19], target = 3
+Output: 3
+Explanation: In all examples the original and cloned trees are shown. The target node is a green node from the original tree. The answer is the yellow node from the cloned tree.
+Example 2:
+
+
+Input: tree = [7], target =  7
+Output: 7
+Example 3:
+
+
+Input: tree = [8,null,6,null,5,null,4,null,3,null,2,null,1], target = 4
+Output: 4
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [1, 104].
+The values of the nodes of the tree are unique.
+target node is a node from the original tree and is not null.
+ 
+
+Follow up: Could you solve the problem if repeated values on the tree are allowed?*/
+
+struct TreeNode {
+    int val;
+     TreeNode *left;
+     TreeNode *right;
+     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ };
+
+TreeNode* getTargetCopy(TreeNode* original, TreeNode* cloned, TreeNode* target)
+{
+    if (original == nullptr)
+        return nullptr;
+
+    if (original == target)
+        return cloned;
+
+    TreeNode* leftResult = getTargetCopy(original->left, cloned->left, target);
+
+    if (leftResult != nullptr)
+        return leftResult;
+
+    return getTargetCopy(original->right, cloned->right, target);
+}
+
+/*You are given an integer array nums, an integer k, and an integer multiplier.
+
+You need to perform k operations on nums. In each operation:
+
+Find the minimum value x in nums. If there are multiple occurrences of the minimum value, select the one that appears first.
+Replace the selected minimum value x with x * multiplier.
+Return an integer array denoting the final state of nums after performing all k operations.
+
+ 
+
+Example 1:
+
+Input: nums = [2,1,3,5,6], k = 5, multiplier = 2
+
+Output: [8,4,6,5,6]
+
+Explanation:
+
+Operation	Result
+After operation 1	[2, 2, 3, 5, 6]
+After operation 2	[4, 2, 3, 5, 6]
+After operation 3	[4, 4, 3, 5, 6]
+After operation 4	[4, 4, 6, 5, 6]
+After operation 5	[8, 4, 6, 5, 6]
+Example 2:
+
+Input: nums = [1,2], k = 3, multiplier = 4
+
+Output: [16,8]
+
+Explanation:
+
+Operation	Result
+After operation 1	[4, 2]
+After operation 2	[4, 8]
+After operation 3	[16, 8]
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 100
+1 <= k <= 10
+1 <= multiplier <= 5*/
+
+#include <vector>
+#include <queue>
+
+class Solution {
+public:
+    std::vector<int> getFinalState(std::vector<int>& nums, int k, int multiplier)
+    {
+        std::priority_queue<std::pair<int,int>, std::vector<std::pair<int,int>>, std::greater<std::pair<int,int>>> priorityQueue;
+
+        for (int i = 0; i < nums.size(); i++) 
+        {
+            priorityQueue.emplace(nums[i], i);
+        }
+
+        while (k--) 
+        {
+            auto [val, idx] = priorityQueue.top();
+            priorityQueue.pop();
+
+            int newVal = val * multiplier;
+            nums[idx] = newVal;
+
+            priorityQueue.emplace(newVal, idx);
+        }
+
+        return nums;
+    }
+};
+
+/*
+Given an integer array nums of length n, you want to create an array ans of length 2n where ans[i] == nums[i] and ans[i + n] == nums[i] for 0 <= i < n (0-indexed).
+
+Specifically, ans is the concatenation of two nums arrays.
+
+Return the array ans.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,1]
+Output: [1,2,1,1,2,1]
+Explanation: The array ans is formed as follows:
+- ans = [nums[0],nums[1],nums[2],nums[0],nums[1],nums[2]]
+- ans = [1,2,1,1,2,1]
+Example 2:
+
+Input: nums = [1,3,2,1]
+Output: [1,3,2,1,1,3,2,1]
+Explanation: The array ans is formed as follows:
+- ans = [nums[0],nums[1],nums[2],nums[3],nums[0],nums[1],nums[2],nums[3]]
+- ans = [1,3,2,1,1,3,2,1]
+ 
+
+Constraints:
+
+n == nums.length
+1 <= n <= 1000
+1 <= nums[i] <= 1000
+*/
+
+std::vector<int> getConcatenation(std::vector<int>& nums) 
+{
+    std::vector<int> toReturn;
+    toReturn.reserve(nums.size() * 2);
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        toReturn.push_back(nums[i]);
+    }
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        toReturn.push_back(nums[i]);
+    }
+
+    return toReturn;
+}
+
+/*
+You are given a 0-indexed integer array nums of size n.
+
+Define two arrays leftSum and rightSum where:
+
+leftSum[i] is the sum of elements to the left of the index i in the array nums. If there is no such element, leftSum[i] = 0.
+rightSum[i] is the sum of elements to the right of the index i in the array nums. If there is no such element, rightSum[i] = 0.
+Return an integer array answer of size n where answer[i] = |leftSum[i] - rightSum[i]|.
+
+ 
+
+Example 1:
+
+Input: nums = [10,4,8,3]
+Output: [15,1,11,22]
+Explanation: The array leftSum is [0,10,14,22] and the array rightSum is [15,11,3,0].
+The array answer is [|0 - 15|,|10 - 11|,|14 - 3|,|22 - 0|] = [15,1,11,22].
+Example 2:
+
+Input: nums = [1]
+Output: [0]
+Explanation: The array leftSum is [0] and the array rightSum is [0].
+The array answer is [|0 - 0|] = [0].
+ 
+
+Constraints:
+
+1 <= nums.length <= 1000
+1 <= nums[i] <= 105
+*/
+
+std::vector<int> leftRightDifference(std::vector<int>& nums)
+{
+    std::vector<int> leftRightSumContainer = {0,0};
+
+    for (int i = 1; i < nums.size(); ++i)
+    {
+        leftRightSumContainer[0] += nums[i-1];
+    }
+
+    for (int i = nums.size() - 2; i >= 0; --i)
+    {
+        leftRightSumContainer[1] += nums[i+1];
+    }
+
+    return leftRightSumContainer;
+}
+
+/*You are given an integer array nums.
+
+You replace each element in nums with the sum of its digits.
+
+Return the minimum element in nums after all replacements.
+
+ 
+
+Example 1:
+
+Input: nums = [10,12,13,14]
+
+Output: 1
+
+Explanation:
+
+nums becomes [1, 3, 4, 5] after all replacements, with minimum element 1.
+
+Example 2:
+
+Input: nums = [1,2,3,4]
+
+Output: 1
+
+Explanation:
+
+nums becomes [1, 2, 3, 4] after all replacements, with minimum element 1.
+
+Example 3:
+
+Input: nums = [999,19,199]
+
+Output: 10
+
+Explanation:
+
+nums becomes [27, 10, 19] after all replacements, with minimum element 10.
+
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 104*/
+
+class Solution {
+public:
+    int minElement(std::vector<int>& nums) 
+    {
+        int currentMinFound = INT_MAX;
+
+        for (int i = 0 ; i < nums.size(); ++i)
+        {
+            int currentTotal = 0;
+            int currentIntToDecompose = nums[i];
+
+            while (currentIntToDecompose > 0)
+            {
+                currentTotal += currentIntToDecompose % 10;
+                currentIntToDecompose /= 10; 
+            }
+
+            if (currentTotal < currentMinFound)
+            {
+                currentMinFound = currentTotal;
+            }
+        }
+
+        return currentMinFound;
+    }
+};
+
+/*You are given an integer array nums.
+
+The alternating sum of nums is the value obtained by adding elements at even indices and subtracting elements at odd indices. That is, nums[0] - nums[1] + nums[2] - nums[3]...
+
+Return an integer denoting the alternating sum of nums.
+
+ 
+
+Example 1:
+
+Input: nums = [1,3,5,7]
+
+Output: -4
+
+Explanation:
+
+Elements at even indices are nums[0] = 1 and nums[2] = 5 because 0 and 2 are even numbers.
+Elements at odd indices are nums[1] = 3 and nums[3] = 7 because 1 and 3 are odd numbers.
+The alternating sum is nums[0] - nums[1] + nums[2] - nums[3] = 1 - 3 + 5 - 7 = -4.
+Example 2:
+
+Input: nums = [100]
+
+Output: 100
+
+Explanation:
+
+The only element at even indices is nums[0] = 100 because 0 is an even number.
+There are no elements on odd indices.
+The alternating sum is nums[0] = 100.
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+1 <= nums[i] <= 100*/
+
+int alternatingSum(std::vector<int>& nums) 
+{
+    int alternatingSum = 0;
+    for(int i = 0; i < nums.size(); ++i)
+    {
+        if(i % 2 == 0)
+            alternatingSum += nums[i];
+        else 
+            alternatingSum -= nums[i];
+    }
+
+    return alternatingSum;
+}
+
+/*
+You are given a string s consisting of lowercase English letters ('a' to 'z').
+
+Your task is to:
+
+Find the vowel (one of 'a', 'e', 'i', 'o', or 'u') with the maximum frequency.
+Find the consonant (all other letters excluding vowels) with the maximum frequency.
+Return the sum of the two frequencies.
+
+Note: If multiple vowels or consonants have the same maximum frequency, you may choose any one of them. If there are no vowels or no consonants in the string, consider their frequency as 0.
+
+The frequency of a letter x is the number of times it occurs in the string.
+ 
+
+Example 1:
+
+Input: s = "successes"
+
+Output: 6
+
+Explanation:
+
+The vowels are: 'u' (frequency 1), 'e' (frequency 2). The maximum frequency is 2.
+The consonants are: 's' (frequency 4), 'c' (frequency 2). The maximum frequency is 4.
+The output is 2 + 4 = 6.
+Example 2:
+
+Input: s = "aeiaeia"
+
+Output: 3
+
+Explanation:
+
+The vowels are: 'a' (frequency 3), 'e' ( frequency 2), 'i' (frequency 2). The maximum frequency is 3.
+There are no consonants in s. Hence, maximum consonant frequency = 0.
+The output is 3 + 0 = 3.
+ 
+
+Constraints:
+
+1 <= s.length <= 100
+s consists of lowercase English letters only.
+*/
+
+int maxFreqSum(std::string s) 
+{
+    int frequency[26] {0};
+
+    int highestConsonentCount = 0;
+    int highestVowelCount = 0;
+
+    for(int i = 0; i < s.size(); ++i)
+    {
+        char observedChar = s[i];
+        int idx = observedChar - 'a';
+        frequency[idx]++;
+
+        bool isVowel = (observedChar=='a' || observedChar=='e' || observedChar=='i' || observedChar=='o' || observedChar=='u');
+
+        if (isVowel && highestVowelCount < frequency[idx])
+        {
+            highestVowelCount = frequency[idx];
+        }
+        else if (!isVowel && highestConsonentCount < frequency[idx])
+        {
+            highestConsonentCount = frequency[idx];
+        }
+    }
+
+    return highestConsonentCount + highestVowelCount;
+}
+
+/*
+You are given two strings s and t such that every character occurs at most once in s and t is a permutation of s.
+
+The permutation difference between s and t is defined as the sum of the absolute difference between the index of the occurrence of each character in s and the index of the occurrence of the same character in t.
+
+Return the permutation difference between s and t.
+
+ 
+
+Example 1:
+
+Input: s = "abc", t = "bac"
+
+Output: 2
+
+Explanation:
+
+For s = "abc" and t = "bac", the permutation difference of s and t is equal to the sum of:
+
+The absolute difference between the index of the occurrence of "a" in s and the index of the occurrence of "a" in t.
+The absolute difference between the index of the occurrence of "b" in s and the index of the occurrence of "b" in t.
+The absolute difference between the index of the occurrence of "c" in s and the index of the occurrence of "c" in t.
+That is, the permutation difference between s and t is equal to |0 - 1| + |1 - 0| + |2 - 2| = 2.
+
+Example 2:
+
+Input: s = "abcde", t = "edbac"
+
+Output: 12
+
+Explanation: The permutation difference between s and t is equal to |0 - 3| + |1 - 2| + |2 - 4| + |3 - 1| + |4 - 0| = 12.
+
+ 
+
+Constraints:
+
+1 <= s.length <= 26
+Each character occurs at most once in s.
+t is a permutation of s.
+s consists only of lowercase English letters.
+*/
+
+int findPermutationDifference(std::string s, std::string t) 
+{
+    int totals[26] = {0};
+
+    for (int i = 0; i < s.size(); ++i)
+    {
+        totals[s[i] - 'a'] += i;
+        totals[t[i] - 'a'] -= i;
+    }
+
+    int total = 0;
+    for (int i = 0; i < 26; ++i)
+    {
+        total += std::abs(totals[i]);
+    }
+
+    return total;
+}
+
+/*Given the array nums consisting of 2n elements in the form [x1,x2,...,xn,y1,y2,...,yn].
+
+Return the array in the form [x1,y1,x2,y2,...,xn,yn].
+
+ 
+
+Example 1:
+
+Input: nums = [2,5,1,3,4,7], n = 3
+Output: [2,3,5,4,1,7] 
+Explanation: Since x1=2, x2=5, x3=1, y1=3, y2=4, y3=7 then the answer is [2,3,5,4,1,7].
+Example 2:
+
+Input: nums = [1,2,3,4,4,3,2,1], n = 4
+Output: [1,4,2,3,3,2,4,1]
+Example 3:
+
+Input: nums = [1,1,2,2], n = 2
+Output: [1,2,1,2]
+ 
+
+Constraints:
+
+1 <= n <= 500
+nums.length == 2n
+1 <= nums[i] <= 10^3*/
+
+std::vector<int> shuffle(std::vector<int>& nums, int n) 
+{
+    std::vector<int> stored;
+    stored.reserve(n * 2);
+
+    for (int i = 0; i < n; i++) 
+    {
+        stored.push_back(nums[i]);
+        stored.push_back(nums[i + n]);
+    }
+
+    return stored;
+}
+
+
+/*You are given a string date representing a Gregorian calendar date in the yyyy-mm-dd format.
+
+date can be written in its binary representation obtained by converting year, month, and day to their binary representations without any leading zeroes and writing them down in year-month-day format.
+
+Return the binary representation of date.
+
+ 
+
+Example 1:
+
+Input: date = "2080-02-29"
+
+Output: "100000100000-10-11101"
+
+Explanation:
+
+100000100000, 10, and 11101 are the binary representations of 2080, 02, and 29 respectively.
+
+Example 2:
+
+Input: date = "1900-01-01"
+
+Output: "11101101100-1-1"
+
+Explanation:
+
+11101101100, 1, and 1 are the binary representations of 1900, 1, and 1 respectively.
+
+ 
+
+Constraints:
+
+date.length == 10
+date[4] == date[7] == '-', and all other date[i]'s are digits.
+The input is generated such that date represents a valid Gregorian calendar date between Jan 1st, 1900 and Dec 31st, 2100 (both inclusive).*/
+
+void appendBinary(int value, std::string& out)
+{
+    if (value == 0)
+    {
+        out.push_back('0');
+        return;
+    }
+
+    std::string temp;
+
+    while (value > 0)
+    {
+        temp.push_back((value & 1) + '0');
+        value >>= 1;
+    }
+
+    int left = 0;
+    int right = temp.size() - 1;
+
+    while (left < right)
+    {
+        char c = temp[left];
+        temp[left] = temp[right];
+        temp[right] = c;
+        left++;
+        right--;
+    }
+
+    out += temp;
+}
+
+std::string convertDateToBinary(std::string date)
+{
+    int year = 0;
+    int month = 0;
+    int day = 0;
+
+    int i = 0;
+
+    while (date[i] != '-') 
+    {
+        year = year * 10 + (date[i] - '0');
+        i++;
+    }
+
+    i++;
+
+    while (date[i] != '-') 
+    {
+        month = month * 10 + (date[i] - '0');
+        i++;
+    }
+
+    i++;
+
+    while (i < date.size()) 
+    {
+        day = day * 10 + (date[i] - '0');
+        i++;
+    }
+
+    std::string out;
+
+    appendBinary(year, out);
+    out.push_back('-');
+    appendBinary(month, out);
+    out.push_back('-');
+    appendBinary(day, out);
+
+    return out;
+}
+
+/*You are given a string allowed consisting of distinct characters and an array of strings words. A string is consistent if all characters in the string appear in the string allowed.
+
+Return the number of consistent strings in the array words.
+
+ 
+
+Example 1:
+
+Input: allowed = "ab", words = ["ad","bd","aaab","baa","badab"]
+Output: 2
+Explanation: Strings "aaab" and "baa" are consistent since they only contain characters 'a' and 'b'.
+Example 2:
+
+Input: allowed = "abc", words = ["a","b","c","ab","ac","bc","abc"]
+Output: 7
+Explanation: All strings are consistent.
+Example 3:
+
+Input: allowed = "cad", words = ["cc","acd","b","ba","bac","bad","ac","d"]
+Output: 4
+Explanation: Strings "cc", "acd", "ac", and "d" are consistent.
+ 
+
+Constraints:
+
+1 <= words.length <= 104
+1 <= allowed.length <= 26
+1 <= words[i].length <= 10
+The characters in allowed are distinct.
+words[i] and allowed contain only lowercase English letters.*/
+
+int countConsistentStrings(const std::string& allowed, const std::vector<std::string>& words)
+{
+    int mask = 0;
+
+    for (char c : allowed)
+        mask |= 1 << (c - 'a');
+
+    int count = 0;
+
+    for (const std::string& s : words)
+    {
+        bool isAllowed = true;
+
+        for (char c : s)
+        {
+            if ((mask & (1 << (c - 'a'))) == 0)
+            {
+                isAllowed = false;
+                break;
+            }
+        }
+
+        if (isAllowed) ++count;
+    }
+
+    return count;
+}
+
+
+
