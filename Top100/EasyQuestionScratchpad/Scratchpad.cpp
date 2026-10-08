@@ -2391,4 +2391,677 @@ int countConsistentStrings(const std::string& allowed, const std::vector<std::st
 }
 
 
+/*You are given an integer array order of length n and an integer array friends.
+
+order contains every integer from 1 to n exactly once, representing the IDs of the participants of a race in their finishing order.
+friends contains the IDs of your friends in the race sorted in strictly increasing order. Each ID in friends is guaranteed to appear in the order array.
+Return an array containing your friends' IDs in their finishing order.
+
+ 
+
+Example 1:
+
+Input: order = [3,1,2,5,4], friends = [1,3,4]
+
+Output: [3,1,4]
+
+Explanation:
+
+The finishing order is [3, 1, 2, 5, 4]. Therefore, the finishing order of your friends is [3, 1, 4].
+
+Example 2:
+
+Input: order = [1,4,5,3,2], friends = [2,5]
+
+Output: [5,2]
+
+Explanation:
+
+The finishing order is [1, 4, 5, 3, 2]. Therefore, the finishing order of your friends is [5, 2].
+
+ 
+
+Constraints:
+
+1 <= n == order.length <= 100
+order contains every integer from 1 to n exactly once
+1 <= friends.length <= min(8, n)
+1 <= friends[i] <= n
+friends is strictly increasing*/
+
+std::vector<int> recoverOrder(std::vector<int>& order, std::vector<int>& friends)
+{
+    std::unordered_set<int> uniqueFriends(friends.begin(), friends.end());
+    std::vector<int> result;
+
+    for (int id : order)
+    {
+        if (uniqueFriends.count(id))
+            result.push_back(id);
+    }
+
+    return result;
+}
+
+/*The XOR total of an array is defined as the bitwise XOR of all its elements, or 0 if the array is empty.
+
+For example, the XOR total of the array [2,5,6] is 2 XOR 5 XOR 6 = 1.
+Given an array nums, return the sum of all XOR totals for every subset of nums. 
+
+Note: Subsets with the same elements should be counted multiple times.
+
+An array a is a subset of an array b if a can be obtained from b by deleting some (possibly zero) elements of b.
+
+ 
+
+Example 1:
+
+Input: nums = [1,3]
+Output: 6
+Explanation: The 4 subsets of [1,3] are:
+- The empty subset has an XOR total of 0.
+- [1] has an XOR total of 1.
+- [3] has an XOR total of 3.
+- [1,3] has an XOR total of 1 XOR 3 = 2.
+0 + 1 + 3 + 2 = 6
+Example 2:
+
+Input: nums = [5,1,6]
+Output: 28
+Explanation: The 8 subsets of [5,1,6] are:
+- The empty subset has an XOR total of 0.
+- [5] has an XOR total of 5.
+- [1] has an XOR total of 1.
+- [6] has an XOR total of 6.
+- [5,1] has an XOR total of 5 XOR 1 = 4.
+- [5,6] has an XOR total of 5 XOR 6 = 3.
+- [1,6] has an XOR total of 1 XOR 6 = 7.
+- [5,1,6] has an XOR total of 5 XOR 1 XOR 6 = 2.
+0 + 5 + 1 + 6 + 4 + 3 + 7 + 2 = 28
+Example 3:
+
+Input: nums = [3,4,5,6,7,8]
+Output: 480
+Explanation: The sum of all XOR totals for every subset is 480.
+ 
+
+Constraints:
+
+1 <= nums.length <= 12
+1 <= nums[i] <= 20
+*/
+
+int subsetXORSum(std::vector<int>& nums)
+{
+    int bitwiseOr = 0;
+    for (int x : nums)
+        bitwiseOr |= x;
+
+    return bitwiseOr << (nums.size() - 1);
+}
+
+/*You are given an m x n integer grid accounts where accounts[i][j] is the amount of money the i​​​​​​​​​​​th​​​​ customer has in the j​​​​​​​​​​​th​​​​ bank. Return the wealth that the richest customer has.
+
+A customer's wealth is the amount of money they have in all their bank accounts. The richest customer is the customer that has the maximum wealth.
+
+ 
+
+Example 1:
+
+Input: accounts = [[1,2,3],[3,2,1]]
+Output: 6
+Explanation:
+1st customer has wealth = 1 + 2 + 3 = 6
+2nd customer has wealth = 3 + 2 + 1 = 6
+Both customers are considered the richest with a wealth of 6 each, so return 6.
+Example 2:
+
+Input: accounts = [[1,5],[7,3],[3,5]]
+Output: 10
+Explanation: 
+1st customer has wealth = 6
+2nd customer has wealth = 10 
+3rd customer has wealth = 8
+The 2nd customer is the richest with a wealth of 10.
+Example 3:
+
+Input: accounts = [[2,8,7],[7,1,3],[1,9,5]]
+Output: 17
+ 
+
+Constraints:
+
+m == accounts.length
+n == accounts[i].length
+1 <= m, n <= 50
+1 <= accounts[i][j] <= 100*/
+
+int maximumWealth(std::vector<std::vector<int>>& accounts)
+{
+    int currentHighestSum = 0;
+
+    int accountSize = accounts.size();
+    for (int i = 0; i < accountSize; ++i)
+    {
+        int currentCustomerWealth = 0;
+
+        int customerAccountSize = accounts[i].size();
+        for (int j = 0; j < customerAccountSize; ++j)
+        {
+            currentCustomerWealth += accounts[i][j];
+        }
+
+        if (currentCustomerWealth > currentHighestSum)
+            currentHighestSum = currentCustomerWealth;
+    }
+
+    return currentHighestSum;
+}
+
+/*You are given three integers x, y, and z, representing the positions of three people on a number line:
+
+x is the position of Person 1.
+y is the position of Person 2.
+z is the position of Person 3, who does not move.
+Both Person 1 and Person 2 move toward Person 3 at the same speed.
+
+Determine which person reaches Person 3 first:
+
+Return 1 if Person 1 arrives first.
+Return 2 if Person 2 arrives first.
+Return 0 if both arrive at the same time.
+Return the result accordingly.
+
+ 
+
+Example 1:
+
+Input: x = 2, y = 7, z = 4
+
+Output: 1
+
+Explanation:
+
+Person 1 is at position 2 and can reach Person 3 (at position 4) in 2 steps.
+Person 2 is at position 7 and can reach Person 3 in 3 steps.
+Since Person 1 reaches Person 3 first, the output is 1.
+
+Example 2:
+
+Input: x = 2, y = 5, z = 6
+
+Output: 2
+
+Explanation:
+
+Person 1 is at position 2 and can reach Person 3 (at position 6) in 4 steps.
+Person 2 is at position 5 and can reach Person 3 in 1 step.
+Since Person 2 reaches Person 3 first, the output is 2.
+
+Example 3:
+
+Input: x = 1, y = 5, z = 3
+
+Output: 0
+
+Explanation:
+
+Person 1 is at position 1 and can reach Person 3 (at position 3) in 2 steps.
+Person 2 is at position 5 and can reach Person 3 in 2 steps.
+Since both Person 1 and Person 2 reach Person 3 at the same time, the output is 0.
+
+ 
+
+Constraints:
+
+1 <= x, y, z <= 100
+*/
+
+int findClosest(int x, int y, int z) 
+{
+    int result = std::abs(x - z) - std::abs(y - z);
+
+    if (result < 0) return 1;
+    else if (result > 0) return 2;
+    else return 0;
+}
+
+/*Given a positive integer n, return the smallest positive integer that is a multiple of both 2 and n.
+ 
+
+Example 1:
+
+Input: n = 5
+Output: 10
+Explanation: The smallest multiple of both 5 and 2 is 10.
+Example 2:
+
+Input: n = 6
+Output: 6
+Explanation: The smallest multiple of both 6 and 2 is 6. Note that a number is a multiple of itself.
+ 
+
+Constraints:
+
+1 <= n <= 150*/
+
+int smallestEvenMultiple(int n)
+{
+    return (n % 2 == 0) ? n : n * 2;
+}
+
+/*You are given an integer array nums consisting of unique integers.
+
+Originally, nums contained every integer within a certain range. However, some integers might have gone missing from the array.
+
+The smallest and largest integers of the original range are still present in nums.
+
+Return a sorted list of all the missing integers in this range. If no integers are missing, return an empty list.
+
+ 
+
+Example 1:
+
+Input: nums = [1,4,2,5]
+
+Output: [3]
+
+Explanation:
+
+The smallest integer is 1 and the largest is 5, so the full range should be [1,2,3,4,5]. Among these, only 3 is missing.
+
+Example 2:
+
+Input: nums = [7,8,6,9]
+
+Output: []
+
+Explanation:
+
+The smallest integer is 6 and the largest is 9, so the full range is [6,7,8,9]. All integers are already present, so no integer is missing.
+
+Example 3:
+
+Input: nums = [5,1]
+
+Output: [2,3,4]
+
+Explanation:
+
+The smallest integer is 1 and the largest is 5, so the full range should be [1,2,3,4,5]. The missing integers are 2, 3, and 4.
+
+ 
+
+Constraints:
+
+2 <= nums.length <= 100
+1 <= nums[i] <= 100*/
+
+
+std::vector<int> findMissingElements(std::vector<int>& nums)
+{
+    std::sort(nums.begin(), nums.end());
+    std::vector<int> missing;
+
+    for (int i = 1; i < nums.size(); ++i)
+    {
+        int prev = nums[i - 1];
+        int curr = nums[i];
+
+        for (int x = prev + 1; x < curr; ++x)
+            missing.push_back(x);
+    }
+
+    return missing;
+}
+
+/*You own a Goal Parser that can interpret a string command. The command consists of an alphabet of "G", "()" and/or "(al)" in some order. The Goal Parser will interpret "G" as the string "G", "()" as the string "o", and "(al)" as the string "al". The interpreted strings are then concatenated in the original order.
+
+Given the string command, return the Goal Parser's interpretation of command.
+
+ 
+
+Example 1:
+
+Input: command = "G()(al)"
+Output: "Goal"
+Explanation: The Goal Parser interprets the command as follows:
+G -> G
+() -> o
+(al) -> al
+The final concatenated result is "Goal".
+Example 2:
+
+Input: command = "G()()()()(al)"
+Output: "Gooooal"
+Example 3:
+
+Input: command = "(al)G(al)()()G"
+Output: "alGalooG"
+ 
+
+Constraints:
+
+1 <= command.length <= 100
+command consists of "G", "()", and/or "(al)" in some order.*/
+
+std::string interpret(std::string command)
+{
+    std::string toReturn;
+
+    for(int i = 0; i < command.size(); ++i)
+    {
+        if(command[i] == '(')
+        {
+            if(command[i + 1] == ')')
+            {
+                toReturn.push_back('o');
+                ++i;
+                continue;
+            }
+            else
+            {
+                toReturn.push_back('a');
+                toReturn.push_back('l');
+                i += 3;
+                continue;
+            }
+        }
+
+        if (command[i] == ')')
+            continue;
+
+        toReturn.push_back(command[i]);
+    }
+
+    return toReturn;
+}
+
+
+/*A bit flip of a number x is choosing a bit in the binary representation of x and flipping it from either 0 to 1 or 1 to 0.
+
+For example, for x = 7, the binary representation is 111 and we may choose any bit (including any leading zeros not shown) and flip it. We can flip the first bit from the right to get 110, flip the second bit from the right to get 101, flip the fifth bit from the right (a leading zero) to get 10111, etc.
+Given two integers start and goal, return the minimum number of bit flips to convert start to goal.
+
+ 
+
+Example 1:
+
+Input: start = 10, goal = 7
+Output: 3
+Explanation: The binary representation of 10 and 7 are 1010 and 0111 respectively. We can convert 10 to 7 in 3 steps:
+- Flip the first bit from the right: 1010 -> 1011.
+- Flip the third bit from the right: 1011 -> 1111.
+- Flip the fourth bit from the right: 1111 -> 0111.
+It can be shown we cannot convert 10 to 7 in less than 3 steps. Hence, we return 3.
+Example 2:
+
+Input: start = 3, goal = 4
+Output: 3
+Explanation: The binary representation of 3 and 4 are 011 and 100 respectively. We can convert 3 to 4 in 3 steps:
+- Flip the first bit from the right: 011 -> 010.
+- Flip the second bit from the right: 010 -> 000.
+- Flip the third bit from the right: 000 -> 100.
+It can be shown we cannot convert 3 to 4 in less than 3 steps. Hence, we return 3.
+ 
+
+Constraints:
+
+0 <= start, goal <= 109*/
+
+int minBitFlips(int start, int goal)
+{
+    int x = start ^ goal;
+    int count = 0;
+
+    while (x)
+    {
+        x &= x - 1;
+        count++;
+    }
+
+    return count;
+}
+
+/*There are n kids with candies. You are given an integer array candies, where each candies[i] represents the number of candies the ith kid has, and an integer extraCandies, denoting the number of extra candies that you have.
+
+Return a boolean array result of length n, where result[i] is true if, after giving the ith kid all the extraCandies, they will have the greatest number of candies among all the kids, or false otherwise.
+
+Note that multiple kids can have the greatest number of candies.
+
+ 
+
+Example 1:
+
+Input: candies = [2,3,5,1,3], extraCandies = 3
+Output: [true,true,true,false,true] 
+Explanation: If you give all extraCandies to:
+- Kid 1, they will have 2 + 3 = 5 candies, which is the greatest among the kids.
+- Kid 2, they will have 3 + 3 = 6 candies, which is the greatest among the kids.
+- Kid 3, they will have 5 + 3 = 8 candies, which is the greatest among the kids.
+- Kid 4, they will have 1 + 3 = 4 candies, which is not the greatest among the kids.
+- Kid 5, they will have 3 + 3 = 6 candies, which is the greatest among the kids.
+Example 2:
+
+Input: candies = [4,2,1,1,2], extraCandies = 1
+Output: [true,false,false,false,false] 
+Explanation: There is only 1 extra candy.
+Kid 1 will always have the greatest number of candies, even if a different kid is given the extra candy.
+Example 3:
+
+Input: candies = [12,1,12], extraCandies = 10
+Output: [true,false,true]
+ 
+
+Constraints:
+
+n == candies.length
+2 <= n <= 100
+1 <= candies[i] <= 100
+1 <= extraCandies <= 50
+*/
+
+std::vector<bool> kidsWithCandies(std::vector<int>& candies, int extraCandies) 
+{
+    // find greatest loop
+
+    int highest = 0;
+
+    for (int i : candies)
+    {
+        if(i > highest) highest = i; 
+    }
+
+    std::vector<bool> hasGreaterCandyNumber;
+    hasGreaterCandyNumber.reserve(candies.size());
+
+    for (int i : candies)
+    {
+        hasGreaterCandyNumber.push_back(i + extraCandies >= highest);
+    }
+    return hasGreaterCandyNumber;
+}
+
+/*You are given an integer n and an integer start.
+
+Define an array nums where nums[i] = start + 2 * i (0-indexed) and n == nums.length.
+
+Return the bitwise XOR of all elements of nums.
+
+ 
+
+Example 1:
+
+Input: n = 5, start = 0
+Output: 8
+Explanation: Array nums is equal to [0, 2, 4, 6, 8] where (0 ^ 2 ^ 4 ^ 6 ^ 8) = 8.
+Where "^" corresponds to bitwise XOR operator.
+Example 2:
+
+Input: n = 4, start = 3
+Output: 8
+Explanation: Array nums is equal to [3, 5, 7, 9] where (3 ^ 5 ^ 7 ^ 9) = 8.
+ 
+
+Constraints:
+
+1 <= n <= 1000
+0 <= start <= 1000
+n == nums.length*/
+
+
+int xorOperation(int n, int start) 
+{
+    int result = 0;
+    for (int i = 0; i < n; ++i)
+        result ^= (start + 2*i);
+    return result;
+}
+
+int sum(int num1, int num2) {
+    return num1 + num2;
+}
+
+/*A valid parentheses string is either empty "", "(" + A + ")", or A + B, where A and B are valid parentheses strings, and + represents string concatenation.
+
+For example, "", "()", "(())()", and "(()(()))" are all valid parentheses strings.
+A valid parentheses string s is primitive if it is nonempty, and there does not exist a way to split it into s = A + B, with A and B nonempty valid parentheses strings.
+
+Given a valid parentheses string s, consider its primitive decomposition: s = P1 + P2 + ... + Pk, where Pi are primitive valid parentheses strings.
+
+Return s after removing the outermost parentheses of every primitive string in the primitive decomposition of s.
+
+ 
+
+Example 1:
+
+Input: s = "(()())(())"
+Output: "()()()"
+Explanation: 
+The input string is "(()())(())", with primitive decomposition "(()())" + "(())".
+After removing outer parentheses of each part, this is "()()" + "()" = "()()()".
+Example 2:
+
+Input: s = "(()())(())(()(()))"
+Output: "()()()()(())"
+Explanation: 
+The input string is "(()())(())(()(()))", with primitive decomposition "(()())" + "(())" + "(()(()))".
+After removing outer parentheses of each part, this is "()()" + "()" + "()(())" = "()()()()(())".
+Example 3:
+
+Input: s = "()()"
+Output: ""
+Explanation: 
+The input string is "()()", with primitive decomposition "()" + "()".
+After removing outer parentheses of each part, this is "" + "" = "".*/
+
+std::string removeOuterParentheses(std::string s) 
+{
+    std::string toReturn;
+    int depth = 0;
+
+    for(char c : s) 
+    {
+        if(c == '(') 
+        {
+            if(depth > 0) 
+                toReturn.push_back(c);
+            depth++;
+        } 
+        else 
+        { 
+            depth--;
+            if(depth > 0) 
+                toReturn.push_back(c);
+        }
+    }
+
+    return toReturn;
+}
+
+/*There are n employees in a company, numbered from 0 to n - 1. Each employee i has worked for hours[i] hours in the company.
+
+The company requires each employee to work for at least target hours.
+
+You are given a 0-indexed array of non-negative integers hours of length n and a non-negative integer target.
+
+Return the integer denoting the number of employees who worked at least target hours.
+
+ 
+
+Example 1:
+
+Input: hours = [0,1,2,3,4], target = 2
+Output: 3
+Explanation: The company wants each employee to work for at least 2 hours.
+- Employee 0 worked for 0 hours and didn't meet the target.
+- Employee 1 worked for 1 hours and didn't meet the target.
+- Employee 2 worked for 2 hours and met the target.
+- Employee 3 worked for 3 hours and met the target.
+- Employee 4 worked for 4 hours and met the target.
+There are 3 employees who met the target.
+Example 2:
+
+Input: hours = [5,1,4,2,2], target = 6
+Output: 0
+Explanation: The company wants each employee to work for at least 6 hours.
+There are 0 employees who met the target.
+ 
+
+Constraints:
+
+1 <= n == hours.length <= 50
+0 <= hours[i], target <= 105*/
+
+int numberOfEmployeesWhoMetTarget(std::vector<int>& hours, int target)
+{
+    int employeesThatWorkedHours = 0;
+
+    for(int i : hours)
+    {
+        if(i >= target)
+            employeesThatWorkedHours++;
+    }
+
+    return employeesThatWorkedHours;
+}
+
+/*
+You are given an n x n integer matrix grid.
+
+Generate an integer matrix maxLocal of size (n - 2) x (n - 2) such that:
+
+maxLocal[i][j] is equal to the largest value of the 3 x 3 matrix in grid centered around row i + 1 and column j + 1.
+In other words, we want to find the largest value in every contiguous 3 x 3 matrix in grid.
+
+Return the generated matrix.
+
+ 
+
+Example 1:
+
+
+Input: grid = [[9,9,8,1],[5,6,2,6],[8,2,6,4],[6,2,2,2]]
+Output: [[9,9],[8,6]]
+Explanation: The diagram above shows the original matrix and the generated matrix.
+Notice that each value in the generated matrix corresponds to the largest value of a contiguous 3 x 3 matrix in grid.
+Example 2:
+
+
+Input: grid = [[1,1,1,1,1],[1,1,1,1,1],[1,1,2,1,1],[1,1,1,1,1],[1,1,1,1,1]]
+Output: [[2,2,2],[2,2,2],[2,2,2]]
+Explanation: Notice that the 2 is contained within every contiguous 3 x 3 matrix in grid.
+ 
+
+Constraints:
+
+n == grid.length == grid[i].length
+3 <= n <= 100
+1 <= grid[i][j] <= 100
+*/
+
+std::vector<std::vector<int>> largestLocal(std::vector<std::vector<int>>& grid) 
+{
+    
+}
 
