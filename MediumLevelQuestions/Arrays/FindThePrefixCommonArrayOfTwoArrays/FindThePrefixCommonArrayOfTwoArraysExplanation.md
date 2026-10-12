@@ -1,0 +1,1 @@
+# Find the prefix common array of two arrays explanation.
