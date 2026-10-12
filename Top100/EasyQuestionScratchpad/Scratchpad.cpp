@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <stack>
 #include <queue>
+#include <map>
+#include <set>
 
 // Contains code for quickly solving the easy level provlems on leetcode where it was not though necessary to do write ups.
 // These questions were generally done for warmup or quick practice sessions.
@@ -1800,6 +1802,7 @@ Constraints:
 
 #include <vector>
 #include <queue>
+#include <unordered_map>
 
 class Solution {
 public:
@@ -3062,6 +3065,302 @@ n == grid.length == grid[i].length
 
 std::vector<std::vector<int>> largestLocal(std::vector<std::vector<int>>& grid) 
 {
-    
+    int n = grid.size();
+    int m = n - 2;
+
+    std::vector<std::vector<int>> result(m, std::vector<int>(m));
+
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < m; ++j) 
+        {
+            int mx = 0;
+
+            for (int r = i; r < i + 3; ++r) 
+            {
+                for (int c = j; c < j + 3; ++c) 
+                {
+                    mx = std::max(mx, grid[r][c]);
+                }
+            }
+
+            result[i][j] = mx;
+        }
+    }
+
+    return result;
 }
+
+/**
+ * There is a hidden integer array arr that consists of n non-negative integers.
+
+It was encoded into another integer array encoded of length n - 1, such that encoded[i] = arr[i] XOR arr[i + 1]. For example, if arr = [1,0,2,1], then encoded = [1,2,3].
+
+You are given the encoded array. You are also given an integer first, that is the first element of arr, i.e. arr[0].
+
+Return the original array arr. It can be proved that the answer exists and is unique.
+
+ 
+
+Example 1:
+
+Input: encoded = [1,2,3], first = 1
+Output: [1,0,2,1]
+Explanation: If arr = [1,0,2,1], then first = 1 and encoded = [1 XOR 0, 0 XOR 2, 2 XOR 1] = [1,2,3]
+Example 2:
+
+Input: encoded = [6,2,7,3], first = 4
+Output: [4,2,0,7,4]
+ 
+
+Constraints:
+
+2 <= n <= 104
+encoded.length == n - 1
+0 <= encoded[i] <= 105
+0 <= first <= 105
+ */
+
+
+std::vector<int> decode(std::vector<int>& encoded, int first) 
+{
+    int n = encoded.size() + 1;
+    std::vector<int> decoded;
+    decoded.reserve(n);
+    decoded.push_back(first);
+
+    for (int i = 0; i < encoded.size(); ++i) 
+    {
+        decoded.push_back(decoded.back() ^ encoded[i]);
+    }
+
+    return decoded;
+}
+
+
+/*Given the array nums, for each nums[i] find out how many numbers in the array are smaller than it. That is, for each nums[i] you have to count the number of valid j's such that j != i and nums[j] < nums[i].
+
+Return the answer in an array.
+
+ 
+
+Example 1:
+
+Input: nums = [8,1,2,2,3]
+Output: [4,0,1,1,3]
+Explanation: 
+For nums[0]=8 there exist four smaller numbers than it (1, 2, 2 and 3). 
+For nums[1]=1 does not exist any smaller number than it.
+For nums[2]=2 there exist one smaller number than it (1). 
+For nums[3]=2 there exist one smaller number than it (1). 
+For nums[4]=3 there exist three smaller numbers than it (1, 2 and 2).
+Example 2:
+
+Input: nums = [6,5,4,8]
+Output: [2,1,0,3]
+Example 3:
+
+Input: nums = [7,7,7,7]
+Output: [0,0,0,0]
+ 
+
+Constraints:
+
+2 <= nums.length <= 500
+0 <= nums[i] <= 100
+*/
+
+std::vector<int> smallerNumbersThanCurrent(std::vector<int>& nums)
+{
+    // Collect unique sorted values
+    std::set<int> uniqueNums;
+    for (int v : nums)
+        uniqueNums.insert(v);
+
+    // Convert set to vector for indexing
+    std::vector<int> sortedUnique(uniqueNums.begin(), uniqueNums.end());
+
+    // Map each value to its compressed index
+    std::unordered_map<int, int> indexOf;
+    for (int i = 0; i < sortedUnique.size(); ++i)
+        indexOf[sortedUnique[i]] = i;
+
+    // Count frequencies using compressed indices
+    std::vector<int> freq(sortedUnique.size(), 0);
+    for (int v : nums)
+        freq[indexOf[v]]++;
+
+    // Build prefix sums (how many numbers are smaller)
+    std::vector<int> prefix(freq.size(), 0);
+    for (int i = 1; i < freq.size(); ++i)
+        prefix[i] = prefix[i - 1] + freq[i - 1];
+
+    // Build the final result using lookups
+    std::vector<int> result;
+    result.reserve(nums.size());
+
+    for (int v : nums)
+        result.push_back(prefix[indexOf[v]]);
+
+    return result;
+}
+
+/*Design a parking system for a parking lot. The parking lot has three kinds of parking spaces: big, medium, and small, with a fixed number of slots for each size.
+
+Implement the ParkingSystem class:
+
+ParkingSystem(int big, int medium, int small) Initializes object of the ParkingSystem class. The number of slots for each parking space are given as part of the constructor.
+bool addCar(int carType) Checks whether there is a parking space of carType for the car that wants to get into the parking lot. carType can be of three kinds: big, medium, or small, which are represented by 1, 2, and 3 respectively. A car can only park in a parking space of its carType. If there is no space available, return false, else park the car in that size space and return true.
+ 
+
+Example 1:
+
+Input
+["ParkingSystem", "addCar", "addCar", "addCar", "addCar"]
+[[1, 1, 0], [1], [2], [3], [1]]
+Output
+[null, true, true, false, false]
+
+Explanation
+ParkingSystem parkingSystem = new ParkingSystem(1, 1, 0);
+parkingSystem.addCar(1); // return true because there is 1 available slot for a big car
+parkingSystem.addCar(2); // return true because there is 1 available slot for a medium car
+parkingSystem.addCar(3); // return false because there is no available slot for a small car
+parkingSystem.addCar(1); // return false because there is no available slot for a big car. It is already occupied.
+ 
+
+Constraints:
+
+0 <= big, medium, small <= 1000
+carType is 1, 2, or 3
+At most 1000 calls will be made to addCar*/
+
+class ParkingSystem {
+public:
+
+    ParkingSystem(int big, int medium, int small) 
+    {
+        bigSpaces = big;
+        mediumSpaces = medium;
+        smallSpaces = small;
+    }
+    
+    bool addCar(int carType) 
+    {
+        switch (carType)
+        {
+        case 1:
+            if (bigSpaces > 0)
+            {
+                bigSpaces--;
+                return true;
+            }
+            else return false;             
+            break;
+
+        case 2:
+            if (mediumSpaces > 0)
+            {
+                mediumSpaces--;
+                return true;
+            }
+            else return false;             
+        case 3:
+            if (smallSpaces > 0)
+            {
+                smallSpaces--;
+                return true;
+            }
+            else return false;                  
+        
+        default:
+        return false;
+        }
+    }
+
+private: 
+    int bigSpaces;
+    int mediumSpaces;
+    int smallSpaces;
+};
+
+
+/*A sentence is a list of words that are separated by a single space with no leading or trailing spaces. Each of the words consists of only uppercase and lowercase English letters (no punctuation).
+
+For example, "Hello World", "HELLO", and "hello world hello world" are all sentences.
+You are given a sentence s​​​​​​ and an integer k​​​​​​. You want to truncate s​​​​​​ such that it contains only the first k​​​​​​ words. Return s​​​​​​ after truncating it.
+
+ 
+
+Example 1:
+
+Input: s = "Hello how are you Contestant", k = 4
+Output: "Hello how are you"
+Explanation:
+The words in s are ["Hello", "how", "are", "you", "Contestant"].
+The first 4 words are ["Hello", "how", "are", "you"].
+Hence, you should return "Hello how are you".
+Example 2:
+
+Input: s = "What is the solution to this problem", k = 4
+Output: "What is the solution"
+Explanation:
+The words in s are ["What", "is", "the", "solution", "to", "this", "problem"].
+The first 4 words are ["What", "is", "the", "solution"].
+Hence, you should return "What is the solution".
+Example 3:
+
+Input: s = "chopper is not a tanuki", k = 5
+Output: "chopper is not a tanuki"
+ 
+
+Constraints:
+
+1 <= s.length <= 500
+k is in the range [1, the number of words in s].
+s consist of only lowercase and uppercase English letters and spaces.
+The words in s are separated by a single space.
+There are no leading or trailing spaces.*/
+
+std::string truncateSentence(std::string s, int k)
+{
+    // Truncate front
+    int stringStartPoint;
+
+    for (int i = 0; i < s.size(); ++i) 
+    {
+        if (s[i] != ' ') {
+            stringStartPoint = i;
+            break;
+        }
+    }
+
+    // Truncate back
+    int stringEndPoint;
+    for (int i = s.size() - 1; i >= 0; --i) 
+    {
+        if (s[i] != ' ') 
+        {
+            stringEndPoint = i;
+            break;
+        }
+    }
+
+    // Adjust end position based on words found.
+    int spaceCounter = 0;
+    for (int i = stringStartPoint; i <= stringEndPoint; ++i) 
+    {
+        if (s[i] == ' ') 
+        {
+            spaceCounter++;
+            if (spaceCounter >= k) 
+            {
+                stringEndPoint = i - 1;
+                break;
+            }
+        }
+    }
+
+    return s.substr(stringStartPoint, stringEndPoint - stringStartPoint + 1);
+}
+
 
