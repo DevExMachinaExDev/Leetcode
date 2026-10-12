@@ -10,7 +10,8 @@
 #include <set>
 
 // Contains code for quickly solving the easy level provlems on leetcode where it was not though necessary to do write ups.
-// These questions were generally done for warmup or quick practice sessions.
+// These questions were generally done for warmup or quick practice sessions or general learning around the topic.
+// They were separated from the more detailed write-ups and explanations for medium and hard level questions for the sake of brevity.
 
 /*
 You are given a 2D integer array matrix of size n x n representing the adjacency matrix of an undirected graph with n vertices labeled from 0 to n - 1.
