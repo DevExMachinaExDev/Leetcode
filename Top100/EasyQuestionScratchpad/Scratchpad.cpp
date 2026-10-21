@@ -3365,3 +3365,23 @@ std::string truncateSentence(std::string s, int k)
 }
 
 
+
+std::vector<int> twoSum(std::vector<int>& nums, int target)
+{
+    std::vector<int> toReturn{-1, -1};
+    std::unordered_map<int, int> seen;
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        if (seen.find(target - nums[i]) != seen.end())
+        {
+            toReturn[0] = seen[target - nums[i]];
+            toReturn[1] = i;
+            break;
+        }
+
+        seen[nums[i]] = i;
+    }
+
+    return toReturn;
+}
