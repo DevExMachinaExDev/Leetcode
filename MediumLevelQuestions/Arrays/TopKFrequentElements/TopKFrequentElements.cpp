@@ -6,18 +6,18 @@
 std::vector<int> topKFrequentFirstAttempt(std::vector<int>& nums, int k)
 {
     // Populate frequency map
-    std::unordered_map<int, int> frequency;
+    std::unordered_map<int, int> frequencyMap;
 
     for (int num : nums)
     {
-        frequency[num]++;
+        frequencyMap[num]++;
     }
 
     // Store frequency map in sortable vector.
     std::vector<std::pair<int, int>> frequenciesAsVector;
-    frequenciesAsVector.reserve(frequency.size());
+    frequenciesAsVector.reserve(frequencyMap.size());
 
-    for (std::pair<const int, int>& entry : frequency)
+    for (std::pair<const int, int>& entry : frequencyMap)
     {
         frequenciesAsVector.push_back({entry.first, entry.second});
     }
