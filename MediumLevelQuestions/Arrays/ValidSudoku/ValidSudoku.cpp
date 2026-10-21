@@ -67,7 +67,7 @@ bool isValidSudokuMultipass(std::vector<std::vector<char>>& board)
 }
 
 //Trades a small amount of additional constant memory for a single traversal. 
-bool isValidSudoku(std::vector<std::vector<char>>& board)
+bool isValidSudokuSinglePass(std::vector<std::vector<char>>& board)
 {
     int rowsBitmasks[9] = {0};
     int columnBitmasks[9] = {0};
