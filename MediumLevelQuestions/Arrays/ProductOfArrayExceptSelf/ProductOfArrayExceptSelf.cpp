@@ -11,7 +11,6 @@ std::vector<int> productExceptSelfHomeMadeDivide(std::vector<int>& nums)
         totalProduct *= i;
     }
     
-
     // Create new array
     std::vector<int> productsExceptSelf;
     productsExceptSelf.reserve(nums.size());
