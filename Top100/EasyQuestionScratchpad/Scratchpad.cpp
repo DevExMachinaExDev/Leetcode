@@ -3385,3 +3385,39 @@ std::vector<int> twoSum(std::vector<int>& nums, int target)
 
     return toReturn;
 }
+
+bool containsNearbyDuplicate(std::vector<int>& nums, int k)
+{
+    if (nums.size() < 2)
+        return false;
+
+    std::unordered_map<int, int> found;
+    for (int i = 0; i < k && i < nums.size(); ++i)
+    {
+        if(found.find(nums[i]) != found.end())
+        {
+            if(i - found[nums[i]] <= k)
+                return true;
+        }
+
+        found[nums[i]] = i;
+    }
+
+    int backPointer = 0;
+
+    for (int i = k +1; i < nums.size(); ++i)
+    {
+        found.erase(nums[backPointer]);
+        backPointer++;
+
+        if(found.find(nums[i]) != found.end())
+        {
+            if(i - found[nums[i]] <= k)
+                return true;
+        }
+
+        found[nums[i]] = i;
+    }
+
+    return false;
+}
