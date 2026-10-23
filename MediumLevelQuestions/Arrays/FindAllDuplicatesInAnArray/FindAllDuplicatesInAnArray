@@ -1,7 +1,7 @@
 #include <vector>
 
 // Solution uses a negative marking system to find the corresponding array value and mark it negative and if it is seen again add it to the return array. O(N) time and complexity;
-std::vector<int> findDuplicates(std::vector<int>& nums)
+std::vector<int> findDuplicatesNegativeMarking(std::vector<int>& nums)
 {
     std::vector<int> foundDuplicates;
     foundDuplicates.reserve(nums.size());
@@ -12,6 +12,12 @@ std::vector<int> findDuplicates(std::vector<int>& nums)
 
         if (nums[targetIndex] < 0) foundDuplicates.push_back(std::abs(nums[i]));
         else nums[targetIndex] *= -1;  
+    }
+
+    // Unnecessary step if you can change the array but for best practice returns array to normal;
+    for (int& i : nums)
+    {
+        i = std::abs(i);
     }
 
     return foundDuplicates;
