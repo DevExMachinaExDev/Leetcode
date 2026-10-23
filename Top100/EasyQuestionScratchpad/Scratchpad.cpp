@@ -1,13 +1,13 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
-#include <numeric>
 #include <string>
 #include <algorithm>
 #include <stack>
 #include <queue>
-#include <map>
+#include <unordered_map>
 #include <set>
+#include <array>
 
 // Contains code for quickly solving the easy level provlems on leetcode where it was not though necessary to do write ups.
 // These questions were generally done for warmup or quick practice sessions or general learning around the topic.
@@ -3421,3 +3421,27 @@ bool containsNearbyDuplicate(std::vector<int>& nums, int k)
 
     return false;
 }
+
+std::vector<std::vector<std::string>> groupAnagram(std::vector<std::string>& strs)
+{
+    std::unordered_map<std::string, std::vector<std::string>> stringsOrderedBySortedString;
+    stringsOrderedBySortedString.reserve(strs.size());
+
+    for(std::string& currentString : strs)
+    {
+        std::string wordAsKey = currentString;
+        std::sort(wordAsKey.begin(), wordAsKey.end());
+        stringsOrderedBySortedString[wordAsKey].push_back(currentString);
+    }
+
+    std::vector<std::vector<std::string>> stringsGroupedByAnagram;
+    stringsGroupedByAnagram.reserve(stringsOrderedBySortedString.size());
+
+    for (auto& entry : stringsOrderedBySortedString)
+    {
+        stringsGroupedByAnagram.push_back(entry.second);
+    }
+
+    return stringsGroupedByAnagram;
+}
+
