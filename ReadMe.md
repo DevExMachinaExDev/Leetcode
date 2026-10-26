@@ -8,3 +8,10 @@ You will find that the structure will be that the question, the solution and a w
 
 I hope you enjoy looking at some of the algorithms I have been working on and find it helpful.
 
+
+## Additional note.
+
+You may occasionally find a scratchpad document in this folder with either easier answers that don't warrant an answer done as a warmup or review questions which were quickly done to revisit a concept, this may regularly be modified tidied or deleted.
+
+
+
