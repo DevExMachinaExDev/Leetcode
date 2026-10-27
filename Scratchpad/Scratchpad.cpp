@@ -1,3 +1,4 @@
+#include <algorithm>
 #include<vector>
 
 std::vector<int> productExceptSelf(std::vector<int>& nums)
@@ -24,4 +25,38 @@ std::vector<int> productExceptSelf(std::vector<int>& nums)
     }
 
     return toReturn;
+}
+
+int maxArea(const std::vector<int>& height)
+{
+    // Variable init
+    int highestLeft = 0;
+    int highestRight = 0;
+    int largestArea = 0;
+    int horizontalDistance = height.size() -1;
+
+    // Pointer init
+    int leftPointer = 0;
+    int rightPointer = height.size() -1;
+    
+    while (leftPointer < rightPointer)
+    {
+        int currentLeft = height[leftPointer];
+        int currentRight = height[rightPointer];
+
+        int currentLowestPillar = std::min(currentLeft, currentRight);
+        int currentArea = currentLowestPillar * (leftPointer - rightPointer);
+
+        largestArea = std::max(currentArea, largestArea);
+
+        highestLeft = std::max(currentLeft, highestLeft);
+        highestRight = std::max(currentRight, highestRight);
+
+        if (currentLeft > currentRight)
+         --rightPointer;
+        else ++leftPointer;
+    }
+
+
+    return largestArea;
 }
