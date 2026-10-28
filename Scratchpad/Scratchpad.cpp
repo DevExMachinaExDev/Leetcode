@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <unordered_map>
 #include<vector>
 
 std::vector<int> productExceptSelf(std::vector<int>& nums)
@@ -82,4 +83,25 @@ int maxProfit(std::vector<int>& prices)
     }
 
     return bestFound;
+}
+
+std::vector<int> twoSum(std::vector<int>& nums, int target)
+{
+    std::unordered_map<int, int> found;
+
+    std::vector<int> toReturn {-1, -1};
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        if(found.find(target - nums[i]) != found.end())
+        {
+            toReturn[0] = found[target - nums[i]];
+            toReturn[1] = i;
+            break;
+        }
+
+        found[nums[i]] = i;
+    }
+
+    return toReturn;
 }
