@@ -60,3 +60,26 @@ int maxArea(const std::vector<int>& height)
 
     return largestArea;
 }
+
+// Best time to buy and sell stock revision.
+int maxProfit(std::vector<int>& prices) 
+{
+    int bestFound = 0;
+    int currentLowest = prices[0];
+    int currentHighest = 0;
+
+    for(int i = 0; i < prices.size(); ++i)
+    {
+        currentHighest = std::max(currentHighest, prices[i]);
+
+        if(prices[i] < currentLowest)
+        {
+            currentLowest = prices[i];
+            currentHighest = currentLowest;
+        }
+
+        bestFound = std::max(bestFound, (currentHighest - currentLowest));
+    }
+
+    return bestFound;
+}
