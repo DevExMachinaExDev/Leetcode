@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <unordered_map>
-#include<vector>
+#include <vector>
+#include <string>
 
 std::vector<int> productExceptSelf(std::vector<int>& nums)
 {
@@ -104,4 +105,25 @@ std::vector<int> twoSum(std::vector<int>& nums, int target)
     }
 
     return toReturn;
+}
+
+int lengthOfLongestSubstring(std::string s)
+{
+    std::unordered_map<char, int> lastSeenChars;
+
+    int leftPointer = 0;
+    int longestFoundSequence = 0;
+
+    for (int rightPointer = 0; rightPointer < s.size(); ++rightPointer)
+    {
+        char currentTargetChar = s[rightPointer];
+
+        if (lastSeenChars.count(currentTargetChar) > 0)
+            leftPointer = std::max(leftPointer, lastSeenChars[rightPointer] + 1);
+        
+        lastSeenChars[currentTargetChar] = rightPointer;
+        longestFoundSequence = std::max(longestFoundSequence, rightPointer - leftPointer + 1);
+    }
+
+    return longestFoundSequence;
 }
