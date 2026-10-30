@@ -127,3 +127,56 @@ int lengthOfLongestSubstring(std::string s)
 
     return longestFoundSequence;
 }
+
+
+int characterReplacement(std::string s, int k) 
+{
+    int frequencies[26] = {0};
+
+    int leftPointer = 0;
+    int maxFrequency = 0;
+    int longestStringFound = 0;
+
+    for (int rightPointer = 0; rightPointer < s.size(); ++rightPointer)
+    {
+        int rightFrequencyIndex = s[rightPointer] - 'A';
+        frequencies[rightFrequencyIndex]++;
+        maxFrequency = std::max(maxFrequency, frequencies[rightFrequencyIndex]);
+
+        // Branchless left Move decision
+        int nonMaximumCharNumber = ((rightPointer - leftPointer + 1) - maxFrequency);
+        int leftPointerShrinkAmount = nonMaximumCharNumber > k; // Always 1 or 0;
+        frequencies[s[leftPointer] - 'A'] -= leftPointerShrinkAmount;
+        leftPointer += leftPointerShrinkAmount;
+        
+
+        longestStringFound = std::max(longestStringFound, rightPointer - leftPointer + 1);
+    }
+
+    return longestStringFound;
+}
+
+
+int containerWithMostWater(const std::vector<int>& height)
+{
+    int leftPointer = 0;
+    int rightPointer = height.size() - 1;
+
+    int bestArea = 0;
+
+    while (rightPointer > leftPointer)
+    {
+        int leftHeight = height[leftPointer];
+        int rightHeight = height[rightPointer];
+        int lowestPillar = std::min(leftHeight, rightHeight);
+        int area = lowestPillar * (rightPointer - leftPointer);
+        bestArea = std::max(bestArea, area);
+
+        if (leftHeight < rightHeight)
+            leftPointer++;
+        else
+            rightPointer--;
+    }
+
+    return bestArea;
+}
