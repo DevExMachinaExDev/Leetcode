@@ -180,3 +180,25 @@ int containerWithMostWater(const std::vector<int>& height)
 
     return bestArea;
 }
+
+int search(std::vector<int>& nums, int target)
+{
+    int leftWindowBoundary = 0;
+    int rightWindowBoundary = nums.size() - 1;
+
+    while (leftWindowBoundary <= rightWindowBoundary)
+    {
+        int currentWindowSize = rightWindowBoundary - leftWindowBoundary;
+        int targetElement = leftWindowBoundary + (currentWindowSize / 2);
+        int currentTargetValue = nums[targetElement];
+
+        if (target == currentTargetValue)
+            return targetElement;
+        else if (target < currentTargetValue)
+            rightWindowBoundary = targetElement - 1;   
+        else if (target > currentTargetValue)
+            leftWindowBoundary = targetElement + 1;
+    }
+
+    return -1;
+}
