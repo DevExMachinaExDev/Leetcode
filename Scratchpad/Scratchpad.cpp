@@ -181,24 +181,23 @@ int containerWithMostWater(const std::vector<int>& height)
     return bestArea;
 }
 
-int search(std::vector<int>& nums, int target)
+double findMaxAverage(std::vector<int>& nums, int k) 
 {
-    int leftWindowBoundary = 0;
-    int rightWindowBoundary = nums.size() - 1;
-
-    while (leftWindowBoundary <= rightWindowBoundary)
+    long long windowCurrentSum = 0;
+    
+    for(int i = 0; i < k; i++) 
     {
-        int currentWindowSize = rightWindowBoundary - leftWindowBoundary;
-        int targetElement = leftWindowBoundary + (currentWindowSize / 2);
-        int currentTargetValue = nums[targetElement];
-
-        if (target == currentTargetValue)
-            return targetElement;
-        else if (target < currentTargetValue)
-            rightWindowBoundary = targetElement - 1;   
-        else if (target > currentTargetValue)
-            leftWindowBoundary = targetElement + 1;
+        windowCurrentSum += nums[i];
     }
-
-    return -1;
+    
+    long long currentHighest = windowCurrentSum;
+    
+    for (int rightPointer = k; rightPointer < nums.size(); ++rightPointer) 
+    {
+        windowCurrentSum += nums[rightPointer] - nums[rightPointer - k];
+        currentHighest = std::max(currentHighest, windowCurrentSum);
+    }
+    
+    return static_cast<double>(currentHighest) / k;
 }
+
