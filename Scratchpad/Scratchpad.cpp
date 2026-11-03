@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <climits>
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -263,3 +264,79 @@ int searchInRotatedSortedArray(std::vector<int>& nums, int target)
 
     return -1;
 }
+
+std::string minWindow(std::string s, std::string t)
+{
+    int tMap[128] = {};
+    int sMap[128] = {};
+    int uniqueValues = 0;
+
+    // populate tMap
+    for (int i = 0; i < t.size(); ++i)
+    {
+        int current = t[i];
+
+        if (tMap[current] == 0)
+            uniqueValues++;
+
+        tMap[current]++;
+    }
+
+    int substringLeftPointer = 0;
+    int substringRightPointer = 0;
+    int smallestFound = INT_MAX;
+
+    int leftPointer = 0;
+
+    for (int rightPointer = 0; rightPointer < s.size(); ++rightPointer)
+    {
+        char currentCharMapLocation = s[rightPointer];
+
+        if (tMap[currentCharMapLocation] == 0)
+            continue;
+
+        sMap[currentCharMapLocation]++;
+
+        if (sMap[currentCharMapLocation] == tMap[currentCharMapLocation])
+            uniqueValues--;
+
+        if (uniqueValues > 0)
+            continue;
+
+        // Move left pointer
+        while (leftPointer <= rightPointer)
+        {
+            if (smallestFound > rightPointer - leftPointer + 1)
+            {
+                smallestFound = rightPointer - leftPointer + 1;
+                substringLeftPointer = leftPointer;
+                substringRightPointer = rightPointer;
+            }
+
+            char currentLeftChar = s[leftPointer];
+
+            if (tMap[currentLeftChar] == 0)
+            {
+                leftPointer++;
+                continue;
+            }
+
+            sMap[currentLeftChar]--;
+
+            if (sMap[currentLeftChar] < tMap[currentLeftChar])
+            {
+                uniqueValues++;
+                leftPointer++;
+                break;
+            }
+
+            leftPointer++;
+        }
+    }
+
+    if (smallestFound == INT_MAX)
+        return "";
+
+    return s.substr(substringLeftPointer,substringRightPointer - substringLeftPointer + 1);
+}
+
