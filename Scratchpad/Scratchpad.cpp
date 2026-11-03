@@ -222,3 +222,44 @@ double findMaxAverage(std::vector<int>& nums, int k)
     
     return static_cast<double>(currentHighest) / k;
 }
+
+int searchInRotatedSortedArray(std::vector<int>& nums, int target) 
+{
+    int left = 0;
+    int right = nums.size() - 1;
+    int middle;
+
+    while (left <= right)
+    {
+        middle = left + ((right - left) / 2);
+
+        int leftValue = nums[left];
+        int midValue = nums[middle];
+        int rightValue = nums[right];
+
+        if (midValue == target)
+            return middle;
+        if (leftValue == target)
+            return left;
+        if (rightValue == target)
+            return right;
+
+        // Check left organised
+        if(leftValue <= midValue)
+        {
+            if(target >= leftValue && target <= midValue)
+                right = middle - 1;          
+            else
+                left = middle + 1;
+        }
+        else // Check right
+        {
+            if(target > midValue && target <= rightValue)
+                left = middle + 1;  
+            else
+                right = middle - 1;
+        }
+    }
+
+    return -1;
+}
