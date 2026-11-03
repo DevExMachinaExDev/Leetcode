@@ -17,7 +17,7 @@ int minEatingSpeed(std::vector<int>& piles, int h)
         {
             hoursNeeded += (pileSize + currentSpeed - 1) / currentSpeed;
 
-            if (hoursNeeded > h || hoursNeeded )
+            if (hoursNeeded > h)
                 break;
         }
 
