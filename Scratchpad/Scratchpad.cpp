@@ -368,7 +368,7 @@ int minEatingSpeed(std::vector<int>& piles, int h)
         }
 
         if (currentAttemptTimeTaken <= h)
-            maximumSpeed = currentSpeed;
+            maximumSpeed = currentSpeed - 1;
     }
 
     return minimumSpeed;

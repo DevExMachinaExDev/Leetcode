@@ -18,13 +18,15 @@ int minEatingSpeed(std::vector<int>& piles, int h)
             hoursNeeded += (pileSize + currentSpeed - 1) / currentSpeed;
 
             if (hoursNeeded > h)
+            {
+                minimumSpeed = currentSpeed + 1;
                 break;
+            }
         }
 
         if (hoursNeeded <= h)
             maximumSpeed = currentSpeed;
-        else
-            minimumSpeed = currentSpeed + 1;
+            
     }
 
     return minimumSpeed;
