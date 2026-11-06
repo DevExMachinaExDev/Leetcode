@@ -340,3 +340,36 @@ std::string minWindow(std::string s, std::string t)
     return s.substr(substringLeftPointer,substringRightPointer - substringLeftPointer + 1);
 }
 
+int minEatingSpeed(std::vector<int>& piles, int h)
+{
+    int minimumSpeed = 1;
+    int maximumSpeed = INT_MIN;
+    
+    for (int i : piles)
+    {
+        maximumSpeed = std::max(maximumSpeed, i);
+    }
+
+    while (minimumSpeed <= maximumSpeed)
+    {
+        int currentSpeed = minimumSpeed + (maximumSpeed - minimumSpeed) / 2;
+        
+        long long currentAttemptTimeTaken = 0; 
+
+        for (int pileSize : piles)
+        {
+            currentAttemptTimeTaken += (pileSize + currentSpeed - 1) / currentSpeed;
+
+            if (currentAttemptTimeTaken > h)
+            {
+                minimumSpeed = currentSpeed + 1;
+                break;
+            }
+        }
+
+        if (currentAttemptTimeTaken <= h)
+            maximumSpeed = currentSpeed;
+    }
+
+    return minimumSpeed;
+}
