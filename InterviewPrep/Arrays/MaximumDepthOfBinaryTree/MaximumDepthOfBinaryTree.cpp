@@ -1,7 +1,5 @@
-/**
- * Definition for a binary tree node.
+#include <algorithm>
 
- */
 class Solution 
 {
     private:
@@ -15,9 +13,27 @@ class Solution
             TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
         };
 
+        int maxDepthFound = 0;
+
     public:
         int maxDepth(TreeNode* root) 
         {
-            return -1;
+             if (root == nullptr)
+                return 0;
+
+            maxDepthRecursive(root, maxDepthFound);
+            return maxDepthFound;
+        }
+
+        void maxDepthRecursive(TreeNode* root, int currentDepth)
+        {
+            currentDepth++;
+            maxDepthFound = std::max(maxDepthFound, currentDepth);
+            
+            if (root->left != nullptr)
+                maxDepthRecursive(root->left,  currentDepth);
+
+            if (root->right != nullptr)
+                maxDepthRecursive(root->right,  currentDepth);
         }
 };
